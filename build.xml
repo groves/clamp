@@ -47,8 +47,11 @@
     <target name="test" depends="compile">
         <exec executable="${jython.script}">
             <env key="CLASSPATH" path="${src.jar}:${test.jar}"/>
+            <env key="JYTHONPATH" path="${extlibs.dir}/nose-0.10.4.zip"/>
+            <env key="NOSE_WHERE" value="${src.python}"/>
             <arg value="-J-Dpython.cachedir.skip=true"/>
-            <arg value="${test.python}/classes.py"/>
+            <arg value="-c"/>
+            <arg value="import nose; nose.main()"/>
         </exec>
     </target>
 	<target name="clean" description="clean up" >
