@@ -4,5 +4,6 @@
 	<classpathentry kind="src" path="test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jython-trunk"/>
+	<classpathentry kind="lib" path="extlibs/asm-3.1.jar"/>
 	<classpathentry kind="output" path="dist/classes"/>
 </classpath>
