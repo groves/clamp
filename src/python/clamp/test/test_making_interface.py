@@ -1,4 +1,5 @@
-from java.lang import Integer, String, Void
+from java.lang import Integer, Number, String, Void
+from java.math import BigInteger
 from nose.tools import assert_true, eq_
 
 import clamp
@@ -20,6 +21,11 @@ class Foo(clamp.Clamp):
     def setValue(self, val):
         self.val = val
 
+    @clamp.javamethod(Number, Number)
+    def double(self, number):
+        return number.longValue() * 2
+
+
 def testInstantiating():
     eq_("name", Foo().name) # Foo picks up a Java bean accessor by having a get* method...
     jcreated = Reflector.instantiate(Foo)
@@ -39,3 +45,9 @@ def testPrimitiveArgument():
     Reflector.call(f, "setValue", [Integer.TYPE], [18])
     eq_(18, f.value)
 
+def testObjectArgument():
+    f = Foo()
+    base = BigInteger.valueOf(12)
+    result = base.multiply(BigInteger.valueOf(2))
+    eq_(result , f.double(base))
+    eq_(result, Reflector.call(f, "double", [Number], [base]))
