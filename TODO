@@ -1,0 +1,14 @@
+Before 0.1
+==========
+Annotate __init__, make an abstract class w/constructor
+Set the name of the created interface/abstract class
+Set the name of the generated proxy class for Class.forName
+If the clamped class extends a Java class and has a clamped __init__, have the generated class extend the Java clas
+Assume python class name for non-specified proxy class name
+Check for illegal Java method names, illegal subclassing
+Ant task to compile all interfaces
+
+After 0.1
+=========
+Generate Java source for the bytecode to expose docs to Java
+Add type checking to internal Python calls to clamped methods so the Python can assume it
