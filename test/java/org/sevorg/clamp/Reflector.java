@@ -11,7 +11,13 @@ public class Reflector
     public static Object call (Object o, String methodName)
         throws Exception
     {
-        return o.getClass().getMethod(methodName).invoke(o);
+        return call(o, methodName, new Class[0], new Object[0]);
+    }
+
+    public static Object call (Object o, String methodName, Class<?>[] paramTypes, Object[] args)
+        throws Exception
+    {
+        return o.getClass().getMethod(methodName, paramTypes).invoke(o, args);
     }
 
 }
