@@ -1,4 +1,10 @@
-from org.sevorg.clamp import InterfaceBuilder
+from org.sevorg.clamp import AbstractClassBuilder, InterfaceBuilder
+
+def javaconstructor(*argTypes):
+    def jconst(f):
+        f._clamp = argTypes
+        return f
+    return jconst
 
 def javamethod(returnType, *argTypes):
     def jmethod(f):
@@ -9,8 +15,10 @@ def javamethod(returnType, *argTypes):
 class Clamper(type):
     def __new__(meta, name, bases, dict):
         builder = None
+        if '__init__' in dict and hasattr(dict['__init__'], '_clamp'):
+            builder = AbstractClassBuilder("A" + name, dict['__init__']._clamp)
         for k, v in dict.iteritems():
-            if hasattr(v, '_clamp'):
+            if hasattr(v, '_clamp') and not k == '__init__':
                 if builder is None:
                     builder = InterfaceBuilder("I" + name)
                 javaReturn, javaArgs = v._clamp
