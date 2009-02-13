@@ -1,3 +1,4 @@
+from java.io import EOFException, FileNotFoundException 
 from java.lang import Integer, Number, String, Void
 from java.math import BigInteger
 from nose.tools import assert_true, eq_
@@ -21,8 +22,9 @@ class Foo(clamp.Clamp):
     def setValue(self, val):
         self.val = val
 
-    @clamp.javamethod(Number, Number)
-    def double(self, number):
+    @clamp.javamethod(Number, Number,
+            exceptions=[FileNotFoundException, EOFException])
+    def doubleIt(self, number):
         return number.longValue() * 2
 
 
@@ -49,5 +51,9 @@ def testObjectArgument():
     f = Foo()
     base = BigInteger.valueOf(12)
     result = base.multiply(BigInteger.valueOf(2))
-    eq_(result , f.double(base))
-    eq_(result, Reflector.call(f, "double", [Number], [base]))
+    eq_(result , f.doubleIt(base))
+    eq_(result, Reflector.call(f, "doubleIt", [Number], [base]))
+    #XXX: getting to the IFoo interface this way is brittle.
+    iface = f.__class__.__base__.__bases__[0]
+    excepts = Reflector.getExceptionTypes(iface, "doubleIt", [Number])
+    eq_(len(excepts), 2)

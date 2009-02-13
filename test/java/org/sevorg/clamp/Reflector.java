@@ -29,4 +29,10 @@ public class Reflector
         return o.getClass().getMethod(methodName, paramTypes).invoke(o, args);
     }
 
+    public static Class[] getExceptionTypes (Class c, String methodName, Class<?>[] paramTypes)
+        throws Exception
+    {
+        return c.getMethod(methodName, paramTypes).getExceptionTypes();
+    }
+
 }

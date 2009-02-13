@@ -27,13 +27,30 @@ public class InterfaceBuilder
         Class<?> exceptions[])
     {
         String desc = makeMethodDesc(returnType, params);
-        cw.visitMethod(ACC_PUBLIC + ACC_ABSTRACT, name, desc, null, null).visitEnd();
+        String[] excepts = makeExcepts(exceptions);
+        cw.visitMethod(ACC_PUBLIC + ACC_ABSTRACT, name, desc, null, excepts).visitEnd();
     }
 
     public Class<?> load ()
     {
         cw.visitEnd();
-        return BytecodeLoader.makeClass(name, cw.toByteArray());
+        byte[] bytes = cw.toByteArray();
+        debug(bytes);
+        return BytecodeLoader.makeClass(name, bytes);
+    }
+
+    private void debug(byte[] ba) {
+        try {
+            java.io.FileOutputStream fos = new java.io.FileOutputStream(name + ".class");
+            java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream(ba.length);
+            baos.write(ba, 0, ba.length);
+            baos.writeTo(fos);
+            baos.close();
+            fos.close();
+        } catch (java.io.IOException io) {
+            System.err.println("damn: " + io);
+            throw new RuntimeException(io);
+        }
     }
 
     protected String makeMethodDesc (Class<?> returnType, Class<?>[] params)
@@ -44,5 +61,14 @@ public class InterfaceBuilder
         }
         String desc = Type.getMethodDescriptor(Type.getType(returnType), typeParams);
         return desc;
+    }
+
+    protected String[] makeExcepts (Class<?>[] exceptions)
+    {
+        String[] excepts = new String[exceptions.length];
+        for (int i = 0; i < exceptions.length; i++) {
+            excepts[i] = Type.getInternalName(exceptions[i]);
+        }
+        return excepts;
     }
 }
