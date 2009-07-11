@@ -1,9 +1,11 @@
 <project name="clamp" default="compile">
-	<!-- set global properties for this build -->
-    <property name="src.java" location="src/java"/>
+    <!-- Location of the jython checkout used to build and test clamp -->
+    <property name="jython.home" location="../jython/trunk"/>
+    <!-- Location of the jython jar relative to jython.home  -->
+    <property name="jython.jar" location="dist/jython-dev.jar"/>
+
+    <!-- Global properties for this build -->
     <property name="src.python" location="src/python"/>
-    <property name="test.java" location="test/java"/>
-    <property name="test.python" location="test/python"/>
     <property name="build.dir" location="build"/>
     <property name="extlibs.dir" location="extlibs"/>
     <property name="dist.dir" location="dist"/>
@@ -12,28 +14,22 @@
     <property name="src.jar" value="${build.dir}/clamp-dev.jar"/>
     <property name="test.jar" value="${build.dir}/clamp-test.jar"/>
 
-	<!-- Jython properties	-->
-    <property name="jython.home" location="../jython/trunk"/>
-    <property name="jython.jar" value="${jython.home}/dist/jython-dev.jar"/>
-    <property name="jython.script" value="${jython.home}/dist/bin/jython"/>
-
-     <path id="main.classpath">
+    <path id="main.classpath">
         <pathelement path="${extlibs.dir}/asm-3.1.jar"/>
-        <pathelement path="${jython.jar}"/>
+        <pathelement path="${jython.home}/${jython.jar}"/>
     </path>
 
-    <target name="init">
-		<!-- Create the build directory structure used by compile -->
+    <target name="init" description="Create the build directory structure used by compile">
         <mkdir dir="${src.build}"/>
         <mkdir dir="${test.build}"/>
 		<mkdir dir="${dist.dir}"/>
 	</target>
 
     <target name="compile" depends="init">
-		<javac srcdir="${src.java}" destdir="${src.build}" debug="on">
+        <javac srcdir="src/java" destdir="${src.build}" debug="on">
             <classpath refid="main.classpath"/>
         </javac>
-   		<javac srcdir="${test.java}" destdir="${test.build}" debug="on">
+        <javac srcdir="test/java" destdir="${test.build}" debug="on">
             <classpath refid="main.classpath"/>
         </javac>
          <jar destfile="${src.jar}">
@@ -45,7 +41,7 @@
          </jar>
     </target>
     <target name="test" depends="compile">
-        <exec executable="${jython.script}">
+        <exec executable="${jython.home}/dist/bin/jython">
             <env key="CLASSPATH" path="${src.jar}:${test.jar}"/>
             <env key="JYTHONPATH" path="${extlibs.dir}/nose-0.10.4.zip"/>
             <env key="NOSE_WHERE" value="${src.python}"/>
@@ -54,7 +50,7 @@
             <arg value="import nose; nose.main()"/>
         </exec>
     </target>
-	<target name="clean" description="clean up" >
+	<target name="clean">
 		<delete dir="${build.dir}"/>
 		<delete dir="${dist.dir}"/>
 	</target>
