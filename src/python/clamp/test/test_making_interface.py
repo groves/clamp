@@ -49,5 +49,5 @@ def testObjectArgument():
     f = Foo()
     base = BigInteger.valueOf(12)
     result = base.multiply(BigInteger.valueOf(2))
-    eq_(result , f.double(base))
+    eq_(result.longValue(), f.double(base))
     eq_(result, Reflector.call(f, "double", [Number], [base]))
