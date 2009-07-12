@@ -34,23 +34,7 @@ public class InterfaceBuilder
     public Class<?> load ()
     {
         cw.visitEnd();
-        byte[] bytes = cw.toByteArray();
-        debug(bytes);
-        return BytecodeLoader.makeClass(name, bytes);
-    }
-
-    private void debug(byte[] ba) {
-        try {
-            java.io.FileOutputStream fos = new java.io.FileOutputStream(name + ".class");
-            java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream(ba.length);
-            baos.write(ba, 0, ba.length);
-            baos.writeTo(fos);
-            baos.close();
-            fos.close();
-        } catch (java.io.IOException io) {
-            System.err.println("damn: " + io);
-            throw new RuntimeException(io);
-        }
+        return BytecodeLoader.makeClass(name, cw.toByteArray());
     }
 
     protected String makeMethodDesc (Class<?> returnType, Class<?>[] params)
