@@ -4,11 +4,11 @@ Generate interfaces for Python classes with clamped methods
 Generate abstract Java classes for Python classes with a clamped __init__
 Set the name of the generated proxy class for Class.forName
 Assume python class name for non-specified proxy class name
+Allow checked exceptions to be specified
 
 Before 0.1
 ==========
 If the clamped class extends a Java class and has a clamped __init__, have the generated class extend the Java class
-Allow checked exceptions to be specified
 Handle array arguments
 Set the name of the created interface
 Version Jython proxy files
