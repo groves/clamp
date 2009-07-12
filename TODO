@@ -1,13 +1,19 @@
+Done
+=========
+Generate interfaces for Python classes with clamped methods
+Generate abstract Java classes for Python classes with a clamped __init__
+Set the name of the generated proxy class for Class.forName
+Assume python class name for non-specified proxy class name
+
 Before 0.1
 ==========
 If the clamped class extends a Java class and has a clamped __init__, have the generated class extend the Java class
 Allow checked exceptions to be specified
 Handle array arguments
 Set the name of the created interface
-Set the name of the generated proxy class for Class.forName
+Version Jython proxy files
 Generate additional method signatures for kwargs
 Allow overloaded method signatures with tuples of class types in position
-Assume python class name for non-specified proxy class name
 Check for illegal Java method names, illegal subclassing
 Ant task to compile all interfaces
 jarjar with same asm settings as Jython
