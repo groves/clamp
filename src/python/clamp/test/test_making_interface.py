@@ -52,7 +52,6 @@ def testObjectArgument():
     result = base.multiply(BigInteger.valueOf(2))
     eq_(result.longValue(), f.doubleIt(base))
     eq_(result, Reflector.call(f, "doubleIt", [Number], [base]))
-    #XXX: getting to the IFoo interface this way is brittle.
-    iface = f.__class__.__base__.__bases__[0]
-    excepts = Reflector.getExceptionTypes(iface, "doubleIt", [Number])
-    eq_(len(excepts), 2)
+    ifoo = [iface for iface in f.getClass().interfaces if iface.__name__ == 'IFoo']
+    eq_(len(ifoo), 1)
+    eq_(len(Reflector.getExceptionTypes(ifoo[0], "doubleIt", [Number])), 2)
