@@ -2,6 +2,9 @@
     <!-- Location of the jython checkout used to build and test clamp -->
     <property name="jython.home" location="../jython/trunk"/>
 
+    <!-- Custom arguments to pass to nose -->
+    <property name="NOSE_ARGS" value=""/>
+
     <!-- Global properties for this build -->
     <property name="src.python" location="src/python"/>
     <property name="build.dir" location="build"/>
@@ -45,6 +48,7 @@
             <arg value="-J-Dpython.cachedir.skip=true"/>
             <arg value="-c"/>
             <arg value="import nose; nose.main()"/>
+            <arg value="${NOSE_ARGS}"/>
         </exec>
     </target>
     <target name="build-nose-zip"
