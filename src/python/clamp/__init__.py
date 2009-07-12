@@ -33,6 +33,8 @@ class Clamper(type):
             else:
                 newbases.append(base)
         bases = tuple(newbases)
+        if '__javaname__' not in dict:
+            dict['__javaname__'] = '%s.%s' % (dict['__module__'], name)
         return type.__new__(type, name, bases, dict)
 
 class Clamp(object):

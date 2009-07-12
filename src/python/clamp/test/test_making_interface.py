@@ -25,7 +25,6 @@ class Foo(clamp.Clamp):
     def double(self, number):
         return number.longValue() * 2
 
-
 def testInstantiating():
     eq_("name", Foo().name) # Foo picks up a Java bean accessor by having a get* method...
     jcreated = Reflector.instantiate(Foo)
