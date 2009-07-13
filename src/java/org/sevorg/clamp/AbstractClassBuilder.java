@@ -8,19 +8,18 @@ import org.objectweb.asm.Type;
 public class AbstractClassBuilder extends InterfaceBuilder
 {
 
-    public AbstractClassBuilder (String name, Class<?>[] argTypes)
+    public AbstractClassBuilder (String name)
     {
         super(name);
         // No-arg constructor for subclass that handles initializing everything
         // TODO - check if this is extending a Java class that requires args and disable this
-        makeEmptyConstructor();
-        makeEmptyConstructor(argTypes);
+        addConstructor();
     }
 
     /**
      * Makes a constructor that just calls its no-arg super constructor and takes the given args.
      */
-    private void makeEmptyConstructor (Class<?>... argTypes)
+    public void addConstructor(Class<?>... argTypes)
     {
         // TODO - call through to super with the args
         String desc = makeMethodDesc(Void.TYPE, argTypes);
