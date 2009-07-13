@@ -1,3 +1,4 @@
+from java.lang import Class
 from org.sevorg.clamp import AbstractClassBuilder, InterfaceBuilder
 
 class JavaConstructorInfo(object):
@@ -34,16 +35,17 @@ def extract_argcombinations(argtypes):
     of the arg types in the list.'''
     argcombinations = [[]]
     for arg in argtypes:
-        if hasattr(arg, '__iter__'):
-            newcombinations = []
-            for option in arg:
-                for combo in argcombinations:
-                    newcombinations.append(combo[:])
-                    newcombinations[-1].append(option)
-            argcombinations = newcombinations
-        else:
+        if not hasattr(arg, '__iter__'):
+            arg = [arg]
+        newcombinations = []
+        for option in arg:
+            if not isinstance(option, Class):
+                raise TypeError("clamp only takes Java classes as argument types, not '%s'" %
+                        option)
             for combo in argcombinations:
-                combo.append(arg)
+                newcombinations.append(combo[:])
+                newcombinations[-1].append(option)
+        argcombinations = newcombinations
     return argcombinations
 
 class Clamper(type):

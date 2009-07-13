@@ -2,7 +2,7 @@ from java.lang import Integer, String, Void
 from clamp import Clamp, javaconstructor, javamethod, extract_argcombinations
 from org.sevorg.clamp import Reflector
 
-from nose.tools import eq_
+from nose.tools import assert_raises, eq_
 
 class OverloadedMethods(Clamp):
     @javaconstructor([Integer.TYPE, String])
@@ -33,3 +33,7 @@ def test_combinations():
     eq_unordered([[Integer.TYPE, String], [Integer.TYPE, Integer.TYPE], [String, Integer.TYPE],
         [String, String]],
         extract_argcombinations([[Integer.TYPE, String], [Integer.TYPE, String]]))
+    assert_raises(TypeError, extract_argcombinations, [None])
+    assert_raises(TypeError, extract_argcombinations, [[None]])
+    assert_raises(TypeError, extract_argcombinations, [[String, [Integer.TYPE, None]]])
+
