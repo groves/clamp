@@ -1,7 +1,7 @@
 from java.io import EOFException, FileNotFoundException 
 from java.lang import Integer, Number, String, Void
 from java.math import BigInteger
-from nose.tools import assert_true, eq_
+from nose.tools import assert_true, assert_raises, eq_
 
 import clamp
 from org.sevorg.clamp import Reflector
@@ -54,3 +54,12 @@ def testObjectArgument():
     ifoo = [iface for iface in f.getClass().interfaces if iface.__name__ == 'IFoo']
     eq_(len(ifoo), 1)
     eq_(len(Reflector.getExceptionTypes(ifoo[0], "doubleIt", [Number])), 2)
+
+def testDisallowedJavaMethodNames():
+    def will_by_numbername():
+        pass
+    will_by_numbername.func_name = '7name'
+    assert_raises(ValueError, clamp.java(Void), will_by_numbername)
+    def double(): pass
+    assert_raises(ValueError, clamp.java(Void), double)
+

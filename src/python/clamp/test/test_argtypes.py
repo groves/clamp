@@ -49,4 +49,3 @@ def test_combinations():
     assert_raises(TypeError, extract_argcombinations, [None])
     assert_raises(TypeError, extract_argcombinations, [[None]])
     assert_raises(TypeError, extract_argcombinations, [[String, [Integer.TYPE, None]]])
-

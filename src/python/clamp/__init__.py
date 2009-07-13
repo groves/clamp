@@ -1,4 +1,5 @@
 from java.lang import Class
+from org.python.core.util import StringUtil
 from org.sevorg.clamp import AbstractClassBuilder, InterfaceBuilder
 
 class JavaCallableInfo(object):
@@ -33,6 +34,9 @@ def java(*argtypes, **kwargs):
         if f.__name__ == "__init__":
             f._clamp = JavaConstructorInfo(numdefaults, argtypes, **kwargs)
         else:
+            if not StringUtil.isJavaIdentifier(f.func_name):
+                raise ValueError("clamped method name '%s' isn't a valid Java identifier" %
+                        f.func_name)
             f._clamp = JavaMethodInfo(numdefaults, argtypes[0], argtypes[1:], **kwargs)
         return f
     return jconst
