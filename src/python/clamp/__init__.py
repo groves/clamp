@@ -1,14 +1,29 @@
 from org.sevorg.clamp import AbstractClassBuilder, InterfaceBuilder
 
+class JavaConstructorInfo(object):
+    def __init__(self, argtypes, **kwargs):
+        self.argtypes = extract_argcombinations(argtypes)
+        self.exceptions = []
+        for k, v in kwargs.iteritems():
+            if k == 'exceptions':
+                self.exceptions = v
+            else:
+                raise TypeError("clamp doesn't understand keyword argument '%s'" % k)
+
+class JavaMethodInfo(JavaConstructorInfo):
+    def __init__(self, returntype, argtypes, **kwargs):
+        JavaConstructorInfo.__init__(self, argtypes, **kwargs)
+        self.returntype = returntype
+
 def javaconstructor(*argTypes, **kwargs):
     def jconst(f):
-        f._clamp = (argTypes, kwargs)
+        f._clamp = JavaConstructorInfo(argTypes, **kwargs)
         return f
     return jconst
 
 def javamethod(returnType, *argTypes, **kwargs):
     def jmethod(f):
-        f._clamp = (returnType, argTypes, kwargs)
+        f._clamp = JavaMethodInfo(returnType, argTypes, **kwargs)
         return f
     return jmethod
 
@@ -35,18 +50,15 @@ class Clamper(type):
     def __new__(meta, name, bases, dict):
         builder = None
         if '__init__' in dict and hasattr(dict['__init__'], '_clamp'):
-            argtypes, javaOpts = dict['__init__']._clamp
             builder = AbstractClassBuilder("A" + name)
-            for combo in extract_argcombinations(argtypes):
+            for combo in dict['__init__']._clamp.argtypes:
                 builder.addConstructor(combo)
         for k, v in dict.iteritems():
             if hasattr(v, '_clamp') and not k == '__init__':
                 if builder is None:
                     builder = InterfaceBuilder("I" + name)
-                javaReturn, argtypes, javaOpts = v._clamp
-                exceptions = javaOpts.get("exceptions", [])
-                for combo in extract_argcombinations(argtypes):
-                    builder.addMethod(k, javaReturn, combo, exceptions)
+                for combo in v._clamp.argtypes:
+                    builder.addMethod(k, v._clamp.returntype, combo, v._clamp.exceptions)
         if builder is None:# No new clamped methods on a subinterface, let it be
             return type.__new__(meta, name, bases, dict)
         iface = builder.load()
