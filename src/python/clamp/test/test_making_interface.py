@@ -10,19 +10,19 @@ class Foo(clamp.Clamp):
     def __init__(self):
         self.val = 7
 
-    @clamp.javamethod(String)
+    @clamp.java(String)
     def getName(self):
         return 'name'
 
-    @clamp.javamethod(Integer.TYPE)
+    @clamp.java(Integer.TYPE)
     def getValue(self):
         return self.val
 
-    @clamp.javamethod(Void.TYPE, Integer.TYPE)
+    @clamp.java(Void.TYPE, Integer.TYPE)
     def setValue(self, val):
         self.val = val
 
-    @clamp.javamethod(Number, Number, throws=[FileNotFoundException, EOFException])
+    @clamp.java(Number, Number, throws=[FileNotFoundException, EOFException])
     def doubleIt(self, number):
         return number.longValue() * 2
 

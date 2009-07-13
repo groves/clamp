@@ -6,7 +6,7 @@ import clamp
 from org.sevorg.clamp import Reflector
 
 class PrimitiveArg(clamp.Clamp):
-    @clamp.javaconstructor(Integer.TYPE, throws=[EOFException])
+    @clamp.java(Integer.TYPE, throws=[EOFException])
     def __init__(self, val):
         self.val = val
 

@@ -16,17 +16,14 @@ class JavaMethodInfo(JavaConstructorInfo):
         JavaConstructorInfo.__init__(self, argtypes, **kwargs)
         self.returntype = returntype
 
-def javaconstructor(*argTypes, **kwargs):
+def java(*argTypes, **kwargs):
     def jconst(f):
-        f._clamp = JavaConstructorInfo(argTypes, **kwargs)
+        if f.__name__ == "__init__":
+            f._clamp = JavaConstructorInfo(argTypes, **kwargs)
+        else:
+            f._clamp = JavaMethodInfo(argTypes[0], argTypes[1:], **kwargs)
         return f
     return jconst
-
-def javamethod(returnType, *argTypes, **kwargs):
-    def jmethod(f):
-        f._clamp = JavaMethodInfo(returnType, argTypes, **kwargs)
-        return f
-    return jmethod
 
 def extract_argcombinations(argtypes):
     '''Takes a list of Java types and returns a list of lists of overloaded combinations.

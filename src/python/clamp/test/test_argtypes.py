@@ -1,15 +1,15 @@
 from java.lang import Integer, String, Void
-from clamp import Clamp, javaconstructor, javamethod, extract_argcombinations
+from clamp import Clamp, java, extract_argcombinations
 from org.sevorg.clamp import Reflector
 
 from nose.tools import assert_raises, eq_
 
 class OverloadedMethods(Clamp):
-    @javaconstructor([Integer.TYPE, String])
+    @java([Integer.TYPE, String])
     def __init__(self, arg):
         self.val = self.primitiveOrObject(arg)
 
-    @javamethod(String, [Integer.TYPE, String])
+    @java(String, [Integer.TYPE, String])
     def primitiveOrObject(self, arg):
         if isinstance(arg, int):
             return 'int'
