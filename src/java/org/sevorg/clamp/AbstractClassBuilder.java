@@ -11,9 +11,6 @@ public class AbstractClassBuilder extends InterfaceBuilder
     public AbstractClassBuilder (String name)
     {
         super(name);
-        // No-arg constructor for subclass that handles initializing everything
-        // TODO - check if this is extending a Java class that requires args and disable this
-        addConstructor(new Class[0], new Class[0]);
     }
 
     /**
