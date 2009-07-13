@@ -53,8 +53,9 @@ class Clamper(type):
         builder = None
         if '__init__' in dict and hasattr(dict['__init__'], '_clamp'):
             builder = AbstractClassBuilder("A" + name)
-            for combo in dict['__init__']._clamp.argtypes:
-                builder.addConstructor(combo)
+            info = dict['__init__']._clamp
+            for combo in info.argtypes:
+                builder.addConstructor(combo, info.throws)
         for k, v in dict.iteritems():
             if hasattr(v, '_clamp') and not k == '__init__':
                 if builder is None:

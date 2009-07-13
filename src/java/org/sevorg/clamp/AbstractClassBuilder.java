@@ -13,17 +13,17 @@ public class AbstractClassBuilder extends InterfaceBuilder
         super(name);
         // No-arg constructor for subclass that handles initializing everything
         // TODO - check if this is extending a Java class that requires args and disable this
-        addConstructor();
+        addConstructor(new Class[0], new Class[0]);
     }
 
     /**
      * Makes a constructor that just calls its no-arg super constructor and takes the given args.
      */
-    public void addConstructor(Class<?>... argTypes)
+    public void addConstructor (Class<?>[] argTypes, Class<?>[] exceptions)
     {
         // TODO - call through to super with the args
         String desc = makeMethodDesc(Void.TYPE, argTypes);
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", desc, null, null);
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", desc, null, makeExcepts(exceptions));
         mv.visitCode();
         mv.visitVarInsn(ALOAD, 0);
         mv.visitMethodInsn(INVOKESPECIAL,
