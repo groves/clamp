@@ -23,6 +23,8 @@ class JavaConstructorInfo(JavaCallableInfo):
 class JavaMethodInfo(JavaCallableInfo):
     def __init__(self, numdefaults, returntype, argtypes, **kwargs):
         JavaCallableInfo.__init__(self, numdefaults, argtypes, **kwargs)
+        if not isinstance(returntype, Class):
+            raise TypeError("returntypes must be an instance of java.lang.Class")
         self.returntype = returntype
 
 def java(*argtypes, **kwargs):
@@ -37,6 +39,9 @@ def java(*argtypes, **kwargs):
             if not StringUtil.isJavaIdentifier(f.func_name):
                 raise ValueError("clamped method name '%s' isn't a valid Java identifier" %
                         f.func_name)
+            if len(argtypes) == 0:
+                raise ValueError("clamped methods must specify a return type as their first arg. \
+Use java.lang.Void to indicate returning nothing.")
             f._clamp = JavaMethodInfo(numdefaults, argtypes[0], argtypes[1:], **kwargs)
         return f
     return jconst
