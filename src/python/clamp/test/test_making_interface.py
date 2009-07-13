@@ -22,8 +22,7 @@ class Foo(clamp.Clamp):
     def setValue(self, val):
         self.val = val
 
-    @clamp.javamethod(Number, Number,
-            exceptions=[FileNotFoundException, EOFException])
+    @clamp.javamethod(Number, Number, throws=[FileNotFoundException, EOFException])
     def doubleIt(self, number):
         return number.longValue() * 2
 

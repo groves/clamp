@@ -4,10 +4,10 @@ from org.sevorg.clamp import AbstractClassBuilder, InterfaceBuilder
 class JavaConstructorInfo(object):
     def __init__(self, argtypes, **kwargs):
         self.argtypes = extract_argcombinations(argtypes)
-        self.exceptions = []
+        self.throws = []
         for k, v in kwargs.iteritems():
-            if k == 'exceptions':
-                self.exceptions = v
+            if k == 'throws':
+                self.throws = v
             else:
                 raise TypeError("clamp doesn't understand keyword argument '%s'" % k)
 
@@ -60,7 +60,7 @@ class Clamper(type):
                 if builder is None:
                     builder = InterfaceBuilder("I" + name)
                 for combo in v._clamp.argtypes:
-                    builder.addMethod(k, v._clamp.returntype, combo, v._clamp.exceptions)
+                    builder.addMethod(k, v._clamp.returntype, combo, v._clamp.throws)
         if builder is None:# No new clamped methods on a subinterface, let it be
             return type.__new__(meta, name, bases, dict)
         iface = builder.load()
