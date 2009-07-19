@@ -7,19 +7,21 @@ Assume python class name for non-specified proxy class name
 Allow checked exceptions to be specified
 Allow overloaded method signatures with tuples of class types in position
 Generate additional method signatures for default arguments in function
+Ant task to compile all proxies
 
 Before 0.1
 ==========
 If the clamped class extends a Java class and has a clamped __init__, have the generated class extend the Java class
+Expose Java fields with something like the property builtin
 Handle array arguments
 Set the name of the created interface
 Version Jython proxy files
 Check for illegal Java method names, illegal subclassing
-Ant task to compile all interfaces
 jarjar with same asm settings as Jython
 
 After 0.1
 =========
+Java annotations for methods, method arguments, fields
 Generate Java source for the bytecode to expose docs to Java
 Add type checking to internal Python calls to clamped methods so the Python can assume it
 Make easy to use from guice, spring, hadoop
