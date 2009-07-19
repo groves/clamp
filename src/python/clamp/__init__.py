@@ -74,6 +74,8 @@ def extract_argcombinations(argtypes, numdefaults=0):
 
 class Clamper(type):
     def __new__(meta, name, bases, dict):
+        if '__clampclass__' in dict:
+            return type.__new__(meta, name, bases, dict)
         builder = None
         if '__init__' in dict and hasattr(dict['__init__'], '_clamp'):
             builder = AbstractClassBuilder("A" + name)
@@ -86,13 +88,14 @@ class Clamper(type):
                     builder = InterfaceBuilder("I" + name)
                 for combo in v._clamp.argtypes:
                     builder.addMethod(k, v._clamp.returntype, combo, v._clamp.throws)
-        if builder is None:# No new clamped methods on a subinterface, let it be
-            return type.__new__(meta, name, bases, dict)
-        iface = builder.load()
+        iface = None
+        if builder:
+            iface = builder.load()
         newbases = []
         for base in bases:
             if type(base) == meta:# Remove the meta-type; PyType can't handle it yet
-                newbases.append(iface)
+                if iface:
+                    newbases.append(iface)
             else:
                 newbases.append(base)
         bases = tuple(newbases)
@@ -102,3 +105,4 @@ class Clamper(type):
 
 class Clamp(object):
     __metaclass__ = Clamper
+    __clampclass__ = True
