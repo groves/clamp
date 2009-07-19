@@ -18,6 +18,7 @@ Set the name of the created interface
 Version Jython proxy files
 Check for illegal Java method names, illegal subclassing
 jarjar with same asm settings as Jython
+Set method visibility
 
 After 0.1
 =========
