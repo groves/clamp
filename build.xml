@@ -13,7 +13,6 @@
     <property name="src.build" value="${build.dir}/src-classes"/>
     <property name="test.build" value="${build.dir}/test-classes"/>
     <property name="src.jar" value="${build.dir}/clamp-dev.jar"/>
-    <property name="test.jar" value="${build.dir}/clamp-test.jar"/>
     <property name="nose.version" value="0.10.4"/>
 
     <path id="main.classpath">
@@ -36,13 +35,10 @@
             <fileset dir="${src.build}"/>
             <fileset dir="${src.python}"/>
         </jar>
-         <jar destfile="${test.jar}">
-             <fileset dir="${test.build}"/>
-         </jar>
     </target>
     <target name="test" depends="compile" description="Compiles clamp and runs its tests">
         <exec executable="${jython.home}/dist/bin/jython" failonerror="true">
-            <env key="CLASSPATH" path="${src.jar}:${test.jar}"/>
+            <env key="CLASSPATH" path="${src.jar}:${test.build}"/>
             <env key="JYTHONPATH" path="${extlibs.dir}/nose-${nose.version}.zip"/>
             <env key="NOSE_WHERE" value="${src.python}"/>
             <arg value="-J-Dpython.cachedir.skip=true"/>
