@@ -1,6 +1,6 @@
-from java.lang import Class
+from java.lang import Class, Object
 from org.python.core.util import StringUtil
-from org.sevorg.clamp import AbstractClassBuilder, InterfaceBuilder
+from org.sevorg.clamp import ClampMetaclass as Clamper
 
 class JavaCallableInfo(object):
     def __init__(self, numdefaults, argtypes, **kwargs):
@@ -47,9 +47,9 @@ Use java.lang.Void to indicate returning nothing.")
     return jconst
 
 def extract_argcombinations(argtypes, numdefaults=0):
-    '''Takes a list of Java types and returns a list of lists of overloaded combinations.
+    '''Takes a list of Java Classes and returns a list of lists of overloaded combinations.
 
-    If any position in the initial list is itself a list, an overloaded method is created for each
+    If any item in the initial list is itself a list, an overloaded method is created for each
     of the arg types in the list.'''
     finishedcombinations = []
     argcombinations = [[]]
@@ -72,37 +72,5 @@ def extract_argcombinations(argtypes, numdefaults=0):
             finishedcombinations.extend(argcombinations)
     return finishedcombinations
 
-class Clamper(type):
-    def __new__(meta, name, bases, dict):
-        if '__clampclass__' in dict:
-            return type.__new__(meta, name, bases, dict)
-        builder = None
-        if '__init__' in dict and hasattr(dict['__init__'], '_clamp'):
-            builder = AbstractClassBuilder("A" + name)
-            info = dict['__init__']._clamp
-            for combo in info.argtypes:
-                builder.addConstructor(combo, info.throws)
-        for k, v in dict.iteritems():
-            if hasattr(v, '_clamp') and not k == '__init__':
-                if builder is None:
-                    builder = InterfaceBuilder("I" + name)
-                for combo in v._clamp.argtypes:
-                    builder.addMethod(k, v._clamp.returntype, combo, v._clamp.throws)
-        iface = None
-        if builder:
-            iface = builder.load()
-        newbases = []
-        for base in bases:
-            if type(base) == meta:# Remove the meta-type; PyType can't handle it yet
-                if iface:
-                    newbases.append(iface)
-            else:
-                newbases.append(base)
-        bases = tuple(newbases)
-        if '__javaname__' not in dict:
-            dict['__javaname__'] = '%s.%s' % (dict['__module__'], name)
-        return type.__new__(type, name, bases, dict)
-
 class Clamp(object):
     __metaclass__ = Clamper
-    __clampclass__ = True

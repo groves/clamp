@@ -19,8 +19,7 @@ def test_extendingclass():
     eq_(5, Reflector.call(clamped, 'get', [Integer.TYPE], [5]))
     assert_raises(UnsupportedOperationException, clamped.add, 5)
 
-# TODO - Make Clamp the metatype on ClampedList so we don't need to use it again here
-class ExtraMethodList(Clamp, ClampedList):
+class ExtraMethodList(ClampedList):
     @java(Integer.TYPE)
     def last(self):
         return self[-1]

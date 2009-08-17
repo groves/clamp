@@ -1,4 +1,4 @@
-<project name="clamp" default="compile">
+<project name="clamp" default="unittest">
     <!-- Location of the jython checkout used to build and test clamp -->
     <property name="jython.home" location="../jython/trunk"/>
 
@@ -11,9 +11,13 @@
     <property name="extlibs.dir" location="extlibs"/>
     <property name="dist.dir" location="dist"/>
     <property name="src.build" value="${build.dir}/src-classes"/>
+    <property name="expose.build" value="${build.dir}/expose-classes"/>
     <property name="test.build" value="${build.dir}/test-classes"/>
+    <property name="integration.build" value="${build.dir}/integration-classes"/>
     <property name="src.jar" value="${build.dir}/clamp-dev.jar"/>
     <property name="nose.version" value="0.10.4"/>
+    <property name="junit.jar" value="${jython.home}/extlibs/junit-3.8.2.jar"/>
+    <property name="jython.jar" location="${jython.home}/dist/jython.jar"/>
 
     <path id="main.classpath">
         <pathelement path="${extlibs.dir}/asm-3.1.jar"/>
@@ -24,7 +28,7 @@
         <element name="jython-elements" implicit="yes"/>
         <sequential>
             <exec executable="${jython.home}/dist/bin/jython" failonerror="true">
-                <env key="CLASSPATH" path="${src.jar}:${test.build}"/>
+                <env key="CLASSPATH" path="${src.jar}:${test.build}:${junit.jar}"/>
                 <arg value="-J-Dpython.cachedir.skip=true"/>
                 <jython-elements/>
             </exec>
@@ -34,18 +38,42 @@
     <target name="init">
         <mkdir dir="${src.build}"/>
         <mkdir dir="${test.build}"/>
-		<mkdir dir="${dist.dir}"/>
+        <mkdir dir="${expose.build}"/>
+        <mkdir dir="${integration.build}"/>
+        <mkdir dir="${dist.dir}"/>
 	</target>
-    <target name="compile" depends="init" description="Compiles the java source and builds jars">
+    <target name="compile" depends="init">
         <javac srcdir="src/java" destdir="${src.build}" debug="on">
             <classpath refid="main.classpath"/>
         </javac>
-        <jar destfile="${src.jar}">
-            <fileset dir="${src.build}"/>
+    </target>
+    <target name="expose" depends="compile">
+        <taskdef name="expose" classname="org.python.expose.generate.ExposeTask">
+            <classpath>
+                <pathelement path="${jython.jar}"/>
+                <path refid="main.classpath"/>
+                <pathelement path="${jython.home}/build/classes"/>
+            </classpath>
+        </taskdef>
+        <expose srcdir="${src.build}" destdir="${expose.build}" includes="**/ClampMetaclass.class"/>
+    </target>
+    <target name="jar" depends="expose" description="Compiles the java source and builds jars">
+       <typedef name="nameunion" classname="org.python.util.NameUnionAntType">
+           <classpath>
+                <pathelement path="${jython.jar}"/>
+           </classpath>
+       </typedef>
+       <jar destfile="${src.jar}" duplicate="fail">
             <fileset dir="${src.python}"/>
+            <nameunion>
+               <fileset dir="${expose.build}"/>
+               <fileset dir="${src.build}"/>
+            </nameunion>
         </jar>
     </target>
-    <target name="test" depends="compile" description="Compiles clamp and runs its tests">
+    <target name="test" depends="unittest,integrationtest"
+        description="Compiles clamp and runs its tests"/>
+    <target name="unittest" depends="jar">
         <javac srcdir="test/java" destdir="${test.build}" debug="on">
             <classpath refid="main.classpath"/>
         </javac>
@@ -54,16 +82,30 @@
             <env key="NOSE_WHERE" value="${src.python}"/>
             <arg value="-c"/>
             <arg value="import nose; nose.main()"/>
-            <arg value="${NOSE_ARGS}"/>
+            <arg line="${NOSE_ARGS}"/>
         </jython>
+    </target>
+    <target name="integrationtest" depends="jar">
+        <jython>
+            <arg line="-m compileproxies -v integration/python ${integration.build}"/>
+        </jython>
+        <junit haltonfailure="true" fork="true">
+            <formatter type="brief" usefile="false"/>
+            <sysproperty key="python.cachedir.skip" value="true"/>
+            <classpath>
+                <pathelement path="${jython.jar"/>
+                <pathelement path="${junit.jar}"/>
+                <pathelement path="${integration.build}"/>
+            </classpath>
+            <batchtest>
+                <fileset dir="${integration.build}" includes="**/Test*.class"/>
+            </batchtest>
+        </junit>
     </target>
     <target name="build-nose-zip"
         description="Compiles nose with jython and builds a zip of the results.  nose-dir must be set to the directory containing the nose package.">
         <jython>
-            <arg value="-m"/>
-            <arg value="compileall"/>
-            <arg value="-f"/>
-            <arg value="${nose-dir}/nose"/>
+            <arg line="-m compileall -f ${nose-dir}/nose"/>
         </jython>
         <jar destfile="${extlibs.dir}/nose-${nose.version}.zip">
             <fileset dir="${nose-dir}" includes="nose/**/*"/>

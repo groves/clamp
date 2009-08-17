@@ -51,9 +51,7 @@ def testObjectArgument():
     result = base.multiply(BigInteger.valueOf(2))
     eq_(result.longValue(), f.doubleIt(base))
     eq_(result, Reflector.call(f, "doubleIt", [Number], [base]))
-    ifoo = [iface for iface in f.getClass().interfaces if iface.__name__ == 'IFoo']
-    eq_(len(ifoo), 1)
-    eq_(len(Reflector.getExceptionTypes(ifoo[0], "doubleIt", [Number])), 2)
+    eq_(len(Reflector.getExceptionTypes(f.getClass(), "doubleIt", [Number])), 2)
 
 def testDisallowedJavaMethodNames():
     def will_by_numbername():
