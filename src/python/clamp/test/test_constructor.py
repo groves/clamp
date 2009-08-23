@@ -14,7 +14,8 @@ def test_constructor_gen():
     eq_('clamp.test.test_constructor.PrimitiveArg', PrimitiveArg(7).getClass().name)
     inst = Reflector.instantiate(PrimitiveArg, [Integer.TYPE], [7])
     eq_(7, inst.val)
-    eq_(EOFException, inst.getClass().superclass.constructors[1].exceptionTypes[0])
+    # check against the 1st constructor as we're generating a superfluous no-arg constructor
+    eq_(EOFException, inst.getClass().constructors[1].exceptionTypes[0])
 
 class OptionalArg(clamp.Clamp):
     @clamp.java(String, String)

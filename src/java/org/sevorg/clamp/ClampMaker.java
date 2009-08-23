@@ -56,12 +56,13 @@ public class ClampMaker extends JavaMaker
             return added;
         }
         Class<?>[] thrownClasses = Py.tojava(constructorToAdd.__getattr__("throws"), Class[].class);
+        String[] internalThrown = mapClasses(thrownClasses);
         for (PyObject parameterTypes : constructorToAdd.__getattr__("argtypes").asIterable()) {
             Class<?>[] parameterClasses = Py.tojava(parameterTypes, Class[].class);
             if(added.add(new ConstructorDescr(parameterClasses, thrownClasses))) {
                 /* Need a fancy constructor for the Java side of things */
                 String fullsig = makeSig(Void.TYPE, parameterClasses);
-                Code code = classfile.addMethod("<init>", fullsig, Modifier.PUBLIC);
+                Code code = classfile.addMethod("<init>", fullsig, Modifier.PUBLIC, internalThrown);
                 callSuper(code, "<init>", mapClass(superclass), new Class<?>[0], Void.TYPE, false);
                 callInitProxy(parameterClasses, code);
             }
