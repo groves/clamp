@@ -20,11 +20,10 @@ public class ClampMaker extends JavaMaker
 
     private PyObject constructorToAdd;
 
-    public ClampMaker (Class<?> superclass, Class<?>[] interfaces, String pythonClass,
-            String pythonModule, PyObject pythonClassDict)
+    public ClampMaker (Class<?> superclass, Class<?>[] interfaces, String qualifiedPythonClass,
+            PyObject pythonClassDict)
     {
-        super(superclass, interfaces, pythonClass, pythonModule,
-            pythonModule + "." + pythonClass, pythonClassDict);
+        super(superclass, interfaces, qualifiedPythonClass, pythonClassDict);
         PyObject clampAttr = Py.newString("_clamp");
         for (PyObject pykey : dict.asIterable()) {
             String key = Py.tojava(pykey, String.class);
@@ -49,9 +48,9 @@ public class ClampMaker extends JavaMaker
     }
 
     @Override
-    protected Set<ConstructorDescr> addConstructors ()
+    protected Set<ConstructorDescr> visitConstructors ()
     {
-        Set<ConstructorDescr> added = super.addConstructors();
+        Set<ConstructorDescr> added = super.visitConstructors();
         if (constructorToAdd == null) {
             return added;
         }
@@ -71,9 +70,9 @@ public class ClampMaker extends JavaMaker
     }
 
     @Override
-    protected Set<MethodDescr> addMethods ()
+    protected Set<MethodDescr> visitMethods ()
     {
-        Set<MethodDescr> added = super.addMethods();
+        Set<MethodDescr> added = super.visitMethods();
         for (Entry<String, PyObject> meth : methodsToAdd.entrySet()) {
             PyObject clampObj = meth.getValue();
             Class<?> returnClass = Py.tojava(clampObj.__getattr__("returntype"), Class.class);
