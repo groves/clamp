@@ -4,6 +4,6 @@ from junit.framework import TestCase
 from clamp import Clamp, java
 
 class TestJUnit(Clamp, TestCase):
-    @java(Void)
+    @java(Void.TYPE)
     def testAddition(self):
         self.assertEquals(4, 1 + 3)

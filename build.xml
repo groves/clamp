@@ -93,7 +93,7 @@
             <formatter type="brief" usefile="false"/>
             <sysproperty key="python.cachedir.skip" value="true"/>
             <classpath>
-                <pathelement path="${jython.jar"/>
+                <pathelement path="${jython.jar}"/>
                 <pathelement path="${junit.jar}"/>
                 <pathelement path="${integration.build}"/>
             </classpath>
