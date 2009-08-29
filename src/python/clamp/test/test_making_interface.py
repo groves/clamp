@@ -1,5 +1,5 @@
 from java.io import EOFException, FileNotFoundException 
-from java.lang import Integer, Number, String, Void
+from java.lang import Number, String
 from java.math import BigInteger
 from nose.tools import assert_true, assert_raises, eq_
 
@@ -14,11 +14,11 @@ class Foo(clamp.Clamp):
     def getName(self):
         return 'name'
 
-    @clamp.java(Integer.TYPE)
+    @clamp.java(clamp.jint)
     def getValue(self):
         return self.val
 
-    @clamp.java(Void.TYPE, Integer.TYPE)
+    @clamp.java(clamp.jvoid, clamp.jint)
     def setValue(self, val):
         self.val = val
 
@@ -42,7 +42,7 @@ def testPrimitiveArgument():
     eq_(12, f.value)
     f.value += 1
     eq_(13, f.getValue())
-    Reflector.call(f, "setValue", [Integer.TYPE], [18])
+    Reflector.call(f, "setValue", [clamp.jint], [18])
     eq_(18, f.value)
 
 def testObjectArgument():
@@ -57,7 +57,7 @@ def testDisallowedJavaMethodNames():
     def will_by_numbername():
         pass
     will_by_numbername.func_name = '7name'
-    assert_raises(ValueError, clamp.java(Void), will_by_numbername)
+    assert_raises(ValueError, clamp.java(clamp.jvoid), will_by_numbername)
     def double(): pass
-    assert_raises(ValueError, clamp.java(Void), double)
+    assert_raises(ValueError, clamp.java(clamp.jvoid), double)
 

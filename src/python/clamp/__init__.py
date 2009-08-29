@@ -1,6 +1,8 @@
-from java.lang import Class, Object
+from java.lang import Class
 from org.python.core.util import StringUtil
 from org.sevorg.clamp import ClampMetaclass as Clamper
+
+from primitives import *
 
 class JavaCallableInfo(object):
     def __init__(self, numdefaults, argtypes, **kwargs):
