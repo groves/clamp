@@ -89,13 +89,14 @@
         <jython>
             <arg line="-m compileproxies -v integration/python ${integration.build}"/>
         </jython>
-        <junit haltonfailure="true" fork="true">
-            <formatter type="brief" usefile="false"/>
+        <junit printsummary="withOutAndErr" haltonfailure="true" fork="true">
             <sysproperty key="python.cachedir.skip" value="true"/>
             <classpath>
                 <pathelement path="${jython.jar}"/>
                 <pathelement path="${junit.jar}"/>
                 <pathelement path="${integration.build}"/>
+                <pathelement path="integration/python"/>
+                <pathelement path="${src.jar}"/>
             </classpath>
             <batchtest>
                 <fileset dir="${integration.build}" includes="**/Test*.class"/>
